@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://narv8ng7xr6b"]
+
+[ext_resource type="Texture2D" uid="uid://dm4qxqs6phuv4" path="res://assets/art/placeholder/character.png" id="1_rwm0n"]
+[ext_resource type="Script" uid="uid://ilf2nohfdfyj" path="res://assets/scripts/player_controller.gd" id="1_s027a"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_rwm0n"]
+height = 44.0
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_s027a")
+speed = 300.0
+jump_power = 400.0
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(2.5, 2.5)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+texture_filter = 1
+position = Vector2(0, -32)
+texture = ExtResource("1_rwm0n")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-1.5, -22)
+shape = SubResource("CapsuleShape2D_rwm0n")
