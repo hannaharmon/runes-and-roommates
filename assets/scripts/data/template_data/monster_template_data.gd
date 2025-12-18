@@ -1,4 +1,4 @@
 class_name MonsterTemplateData 
 extends CreatureTemplateData
 
-@export var drops: Array[MaterialTemplateData] = []
+@export var drops: Array[MaterialTemplateData]
