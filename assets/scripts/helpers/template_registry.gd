@@ -1,5 +1,4 @@
 class_name TemplateRegistry
-extends Node
 ## Maps all template ids to their respective template data.
 
 var character_templates: Dictionary[String, CharacterTemplateData]

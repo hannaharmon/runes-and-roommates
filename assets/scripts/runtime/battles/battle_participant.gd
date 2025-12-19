@@ -1,4 +1,5 @@
 class_name BattleParticipant
+extends RefCounted
 
 var is_ally: bool
 var current_health: int

@@ -1,4 +1,5 @@
 class_name Spell
+extends RefCounted
 ## Runtime version of a Spell.
 ##
 ## Uses information stored in SpellSaveData to compile final power, cost,

@@ -1,4 +1,5 @@
 class_name SpellPreviewResult
+extends RefCounted
 ## Condenses the information reuturned by Spell's preview method.
 ##
 ## This information is everything we need for UI representation 

@@ -3,7 +3,7 @@ extends BattleResolver
 ## Handles all modifications to BattleContext and BattleParticipants.
 
 func deal_damage(
-	source_spell: Spell,
+	source: EffectSource,
 	target: BattleParticipant,
 	base_amount: int,
 	damage_tags: Array[Enums.DamageTag] = []
@@ -11,7 +11,7 @@ func deal_damage(
 	pass #TODO
 
 func heal(
-	source_spell: Spell,
+	source: EffectSource,
 	target: BattleParticipant,
 	amount: int
 ):

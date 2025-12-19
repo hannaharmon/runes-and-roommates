@@ -1,5 +1,6 @@
 @abstract
 class_name BattleResolver
+extends RefCounted
 ## Base class for ExectuionResolver and PreviewResolver to extend.
 ##
 ## PreviewResolver and ExecutionResolver can be used interchangeably to 
@@ -13,14 +14,14 @@ class_name BattleResolver
 ## and the target -- other multipliers have already been factored in.
 
 @abstract func deal_damage(
-	source_spell: Spell,
+	source: EffectSource,
 	target: BattleParticipant,
 	base_amount: int,
 	damage_tags: Array[Enums.DamageTag] = []
 )
 
 @abstract func heal(
-	source_spell: Spell,
+	source: EffectSource,
 	target: BattleParticipant,
 	amount: int
 )
