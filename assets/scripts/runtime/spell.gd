@@ -17,7 +17,7 @@ var compiled: bool = false
 var power: float
 var element_points_cost: ElementPoints
 var element_ratio: ElementRatio
-var description: Description
+var description: String
 
 func _compile_spell():
 	

@@ -13,7 +13,7 @@ func modify_power(power: float) -> float:
 func modify_point_cost(element_points_cost: ElementPoints) -> ElementPoints:
 	return element_points_cost
 
-func modify_description(spell_description: Description) -> Description:
+func modify_description(spell_description: String) -> String:
 	return spell_description
 
 func before_invoke(

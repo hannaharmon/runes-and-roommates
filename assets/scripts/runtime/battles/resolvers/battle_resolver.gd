@@ -4,8 +4,13 @@ class_name BattleResolver
 ##
 ## PreviewResolver and ExecutionResolver can be used interchangeably to 
 ## either examine effects without changing state or actually change state.
+##
 ## All changes to battle state MUST go through resolvers and be implemented by
 ## both derived resolvers.
+##
+## These functions only worry about the last step of damage calculation, which
+## is type advantages. This is why they only need to know the source spell
+## and the target -- other multipliers have already been factored in.
 
 @abstract func deal_damage(
 	source_spell: Spell,
