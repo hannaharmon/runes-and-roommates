@@ -3,6 +3,7 @@ class_name StatusTemplateData
 extends TemplateData
 
 @export var texture: Texture2D
+@export var element_ratio: ElementRatio  # Optional: for statuses that deal elemental damage
 
 func on_apply(_target: BattleParticipant) -> void:
 	pass

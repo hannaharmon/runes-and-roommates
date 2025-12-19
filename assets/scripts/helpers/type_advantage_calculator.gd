@@ -1,6 +1,10 @@
 class_name TypeAdvantageCalculator
 ## Calculates damage multipliers based on elemental type advantages.
 ##
+## IMPORTANT: Type advantages are based on the DAMAGE SOURCE's element_ratio vs the 
+## TARGET's element_ratio. This applies to spells, status effects, or any other 
+## damage source. element_ratio of caster(s) is NOT used for type advantage calculations.
+##
 ## Type advantages:
 ## - Fire > Earth
 ## - Water > Fire
@@ -11,31 +15,34 @@ class_name TypeAdvantageCalculator
 
 ## Returns the total damage multiplier based on type advantages.
 ## 
-## For each attacker element that has advantage over a defender element,
-## multiplier increases by (attacker_ratio * defender_ratio).
-## Example: 0.25 Water attacking 0.5 Fire = 1.0 + (0.25 * 0.5) = 1.125x damage
+## For each element in the damage source that has advantage over an element in the target,
+## multiplier increases by (damage_ratio * target_ratio).
+## Example: 0.25 Water damage hitting 0.5 Fire target = 1.0 + (0.25 * 0.5) = 1.125x damage
+##
+## @param damage_ratio: The element ratio of the damage source (spell, status, etc.)
+## @param target_ratio: The element ratio of the target receiving damage
 static func calculate_type_advantage_multiplier(
-	attacker_ratio: ElementRatio,
-	defender_ratio: ElementRatio
+	damage_ratio: ElementRatio,
+	target_ratio: ElementRatio
 ) -> float:
-	if attacker_ratio == null or defender_ratio == null:
+	if damage_ratio == null or target_ratio == null:
 		return 1.0
 	
 	var multiplier := 1.0
 	
-	# Check each element in attacker's ratio
-	for attacker_elem: Enums.Element in attacker_ratio.ratio:
-		var attacker_amount: float = attacker_ratio.ratio[attacker_elem]
+	# Check each element in the damage source's ratio
+	for damage_elem: Enums.Element in damage_ratio.ratio:
+		var damage_amount: float = damage_ratio.ratio[damage_elem]
 		
 		# Check what this element has advantage over
-		var advantage_against = _get_advantage_against(attacker_elem)
+		var advantage_against = _get_advantage_against(damage_elem)
 		if advantage_against == null:
 			continue
 		
-		# If defender has the weak element, apply bonus
-		if defender_ratio.ratio.has(advantage_against):
-			var defender_amount: float = defender_ratio.ratio[advantage_against]
-			multiplier += attacker_amount * defender_amount
+		# If target has the weak element, apply bonus
+		if target_ratio.ratio.has(advantage_against):
+			var target_amount: float = target_ratio.ratio[advantage_against]
+			multiplier += damage_amount * target_amount
 	
 	return multiplier
 

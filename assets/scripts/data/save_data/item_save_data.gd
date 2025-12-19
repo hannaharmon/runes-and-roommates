@@ -1,6 +1,6 @@
 class_name ItemSaveData
 extends Resource
 
-var id: String
-var quantity: int
-var discovered: bool
+@export var id: String
+@export var quantity: int
+@export var discovered: bool

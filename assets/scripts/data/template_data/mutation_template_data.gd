@@ -6,7 +6,7 @@ extends TemplateData
 ## Should NEVER modify battle context directly -- instead go through the
 ## resolver that is passed in.
 
-@export var texutre: Texture2D
+@export var texture: Texture2D
 @export var appearance_rate: float
 @export var required_elements: Array[Enums.Element]
 
