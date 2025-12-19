@@ -1,6 +1,6 @@
 class_name DescriptionFormatter
-
 ## Turns raw descriptions into BBCode for use by RichTextLabels.
+
 static func format(text: String) -> String:
 	var result := text
 	result = _format_statuses(result)

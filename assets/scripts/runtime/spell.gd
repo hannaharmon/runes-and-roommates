@@ -2,9 +2,9 @@ class_name Spell
 ## Runtime version of a Spell.
 ##
 ## Uses information stored in SpellSaveData to compile final power, cost,
-## and description as well as define cast behavior.
+## and description as well as define preview and cast behavior.
 ## The preview function can be used to see information about what will happen
-## on cast without modifying battle state.
+## on cast without actually modifying battle state.
 
 var data: SpellSaveData
 
@@ -43,18 +43,31 @@ func _invoke_internal(
 	targets: Array[BattleParticipant],
 	battle_context: BattleContext
 ) -> void:
-	pass #TODO
+	
+	# call before_invoke for all mutations
+	for m: MutationTemplateData in data.mutations:
+		m.before_invoke(self, resolver, casters, targets, battle_context)
+	
+	# invoke rune (actually cast the spell)
+	data.rune.invoke_rune(self, resolver, casters, targets, battle_context)
+	
+	# call after_invoke for all mutations
+	for m: MutationTemplateData in data.mutations:
+		m.after_invoke(self, resolver, casters, targets, battle_context)
 
 func preview(
 	casters: Array[BattleParticipant], 
 	targets: Array[BattleParticipant],
 	battle_context: BattleContext
 ) -> SpellPreviewResult:
-	return null #TODO
+	var resolver := PreviewResolver.new()
+	_invoke_internal(resolver, casters, targets, battle_context)
+	return resolver.spell_preview_result
 
 func cast(
 	casters: Array[BattleParticipant], 
 	targets: Array[BattleParticipant],
 	battle_context: BattleContext
 ) -> void:
-	pass #TODO
+	var resolver := ExecutionResolver.new()
+	_invoke_internal(resolver, casters, targets, battle_context)
