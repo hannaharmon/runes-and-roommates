@@ -192,7 +192,7 @@ func _print_team_info(label: String, team: Array[BattleParticipant], casters: Ar
 			tags.append("TARGET")
 		var tag_str = " [" + ", ".join(tags) + "]" if not tags.is_empty() else ""
 		
-		print("  [", i, "] ", participant.get_template().name, tag_str)
+		print("  [", i, "] ", participant.template.name, tag_str)
 		print("      HP: ", participant.current_health, " / ", participant.max_health)
 		print("      Element Ratio: ", _format_ratio(participant.element_ratio))
 		
@@ -209,13 +209,13 @@ func _print_preview(preview: SpellPreviewResult, spell: Spell) -> void:
 		print("\nDamage:")
 		for t in preview.damage_by_target:
 			var damage: int = preview.damage_by_target[t]
-			print("  → ", t.get_template().name, " will take ", damage, " damage")
+			print("  → ", t.template.name, " will take ", damage, " damage")
 			print("    (Base power: ", spell.power, " * type advantage)")
 	
 	if not preview.status_changes.is_empty():
 		print("\nStatus Changes:")
 		for change in preview.status_changes:
-			print("  → ", change.target.get_template().name, " will receive:")
+			print("  → ", change.target.template.name, " will receive:")
 			print("    + ", change.stacks, " stack(s) of ", change.status.name)
 	
 	if preview.damage_by_target.is_empty() and preview.status_changes.is_empty():

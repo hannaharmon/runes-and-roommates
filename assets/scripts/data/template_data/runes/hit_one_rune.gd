@@ -1,13 +1,15 @@
 class_name HitOneRune
 extends RuneTemplateData
-## Example rune that deals damage to a single target.
+## Example rune that deals damage to a single enemy.
 ##
 ## This demonstrates the minimal implementation needed for a damage-dealing rune.
 
 func _init():
 	id = "hit_one"
-	name = "Strike"
+	name = "Hit One Enemy"
 	description = "Deal damage to one enemy."
+	target_team = Enums.TargetTeam.ENEMY
+	target_scope = Enums.TargetScope.SINGLE
 
 func invoke_rune(
 	calling_spell: Spell,

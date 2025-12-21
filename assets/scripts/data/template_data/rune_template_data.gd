@@ -7,6 +7,8 @@ extends TemplateData
 ## resolver that is passed in.
 
 @export var texture: Texture2D
+@export var target_team: Enums.TargetTeam
+@export var target_scope: Enums.TargetScope
 
 func invoke_rune(
 	calling_spell: Spell,

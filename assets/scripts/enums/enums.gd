@@ -14,3 +14,16 @@ enum DamageTag {
 	DOT,
 	PIERCING
 }
+
+enum TargetTeam {
+	ENEMY,
+	ALLY,
+	RANDOM,
+	BOTH
+}
+
+enum TargetScope {
+	SINGLE,
+	RANDOM_SINGLE,
+	ALL
+}

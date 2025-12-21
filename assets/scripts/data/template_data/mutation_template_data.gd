@@ -23,6 +23,12 @@ func modify_point_cost(element_points_cost: ElementPoints) -> ElementPoints:
 func modify_description(spell_description: String) -> String:
 	return spell_description
 
+func modify_target_team(target_team: Enums.TargetTeam) -> Enums.TargetTeam:
+	return target_team
+
+func modify_target_scope(target_scope: Enums.TargetScope) -> Enums.TargetScope:
+	return target_scope
+
 func before_invoke(
 	calling_spell: Spell,
 	resolver: BattleResolver,

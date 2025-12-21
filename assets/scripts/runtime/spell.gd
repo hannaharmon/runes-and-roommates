@@ -19,10 +19,11 @@ var power: float
 var element_points_cost: ElementPoints
 var element_ratio: ElementRatio
 var description: String
+var target_team: Enums.TargetTeam
+var target_scope: Enums.TargetScope
 
 func _compile_spell():
-	# Defense in depth: templates validate on creation, but verify again at usage
-	# to catch programmatic manipulation or deserialization issues
+	# verfy data
 	if data == null:
 		push_error("Spell initialized without save data.")
 		return
@@ -37,6 +38,8 @@ func _compile_spell():
 	power = data.ink.power
 	element_ratio = data.ink.element_ratio
 	description = data.rune.description
+	target_team = data.rune.target_team
+	target_scope = data.rune.target_scope
 	
 	# calculate element points
 	element_points_cost = ElementCalculator.calculate_points(power, element_ratio)
@@ -46,6 +49,8 @@ func _compile_spell():
 		power = m.modify_power(power)
 		element_points_cost = m.modify_point_cost(element_points_cost)
 		description = m.modify_description(description)
+		target_team = m.modify_target_team(target_team)
+		target_scope = m.modify_target_scope(target_scope)
 	
 	compiled = true
 

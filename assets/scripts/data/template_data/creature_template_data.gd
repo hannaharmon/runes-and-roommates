@@ -15,6 +15,12 @@ extends TemplateData
 		if Engine.is_editor_hint():
 			_validate()
 
+@export var health_incr_per_level: int:
+	set(value):
+		health_incr_per_level = value
+		if Engine.is_editor_hint():
+			_validate()
+
 func _init():
 	super._init()
 	_validate()

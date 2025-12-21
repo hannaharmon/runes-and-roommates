@@ -57,6 +57,9 @@ They track:
 - Active statuses (with stacks)
 - References to their template data
 
+### Casting Spells
+Every battle participant has element points determined by their element ratio and their level. Every spell has an element point cost determined by their element ratio and their power. Mutliple battle participants on a team can work together to fulfill the element point requirements to cast one spell.
+
 ### Status System
 Statuses are stack-based and defined via templates.
 
