@@ -44,21 +44,6 @@ These are created in the Godot editor:
   - Set id, name
   - Click "New ElementRatio" inline, set ratios
 
-## Assigning Script-Based Templates
-
-When you need to reference a rune/mutation/status in a `.tres` file:
-
-1. In the inspector, find the field (e.g., `smoldering_mutation.burning_status`)
-2. Click the dropdown
-3. Select "Quick Load..."
-4. Navigate to the **script file** (e.g., `burning_status.gd`)
-5. Godot will create a transient instance automatically
-
-OR in code:
-```gdscript
-var hit_one := preload("res://assets/scripts/data/template_data/runes/hit_one_rune.gd").new()
-```
-
 ## Never Do This
 ❌ Create separate `.tres` files for ElementRatio  
 ❌ Create `.tres` files for runes/mutations/statuses  
@@ -67,5 +52,4 @@ var hit_one := preload("res://assets/scripts/data/template_data/runes/hit_one_ru
 ## Always Do This
 ✅ Create ElementRatio inline in inspector ("New ElementRatio")  
 ✅ Keep runes/mutations/statuses as `.gd` script files  
-✅ Reference scripts directly in inspector or with `preload()`  
 ✅ Only create `.tres` for data-only templates (inks, materials, monsters, characters)
