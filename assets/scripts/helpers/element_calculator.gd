@@ -9,13 +9,19 @@ static func calculate_points(
 	power: float, 
 	element_ratio: ElementRatio
 ) -> ElementPoints:
+	if element_ratio == null:
+		push_error("ElementCalculator.calculate_points called without an ElementRatio.")
+		return ElementPoints.new({})
+	if element_ratio.ratio == null or element_ratio.ratio.is_empty():
+		push_error("ElementRatio is missing element weights; please configure it in the editor.")
+		return ElementPoints.new({})
 	var points: Dictionary[Enums.Element, int] = {}
 	var total_floored_points := 0
 	
 	for e: Enums.Element in element_ratio.ratio:
 		var calculated_points = power * element_ratio.ratio[e]
-		points[e] = floor(calculated_points)
-		total_floored_points += floor(calculated_points)
+		points[e] = int(floor(calculated_points))
+		total_floored_points += int(floor(calculated_points))
 	
 	var remaining = power - total_floored_points
 	if remaining == 0:

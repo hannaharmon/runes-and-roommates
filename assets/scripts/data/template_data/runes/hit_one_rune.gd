@@ -4,6 +4,11 @@ extends RuneTemplateData
 ##
 ## This demonstrates the minimal implementation needed for a damage-dealing rune.
 
+func _init():
+	id = "hit_one"
+	name = "Strike"
+	description = "Deal damage to one enemy."
+
 func invoke_rune(
 	calling_spell: Spell,
 	resolver: BattleResolver,

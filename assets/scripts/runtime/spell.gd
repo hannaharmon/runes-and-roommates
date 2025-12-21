@@ -21,7 +21,18 @@ var element_ratio: ElementRatio
 var description: String
 
 func _compile_spell():
-	
+	# Defense in depth: templates validate on creation, but verify again at usage
+	# to catch programmatic manipulation or deserialization issues
+	if data == null:
+		push_error("Spell initialized without save data.")
+		return
+	if not TemplateValidation.require_resource(data.ink, data, "ink"):
+		return
+	if not TemplateValidation.require_resource(data.rune, data, "rune"):
+		return
+	if not TemplateValidation.require_ratio(data.ink.element_ratio, data.ink, "element_ratio", false):
+		return
+
 	# take base information from ink and rune
 	power = data.ink.power
 	element_ratio = data.ink.element_ratio
@@ -70,5 +81,5 @@ func cast(
 	targets: Array[BattleParticipant],
 	battle_context: BattleContext
 ) -> void:
-	var resolver := ExecutionResolver.new()
+	var resolver := ExecutionResolver.new(battle_context)
 	_invoke_internal(resolver, casters, targets, battle_context)

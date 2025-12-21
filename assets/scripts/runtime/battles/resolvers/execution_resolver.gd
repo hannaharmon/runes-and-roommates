@@ -6,6 +6,11 @@ extends BattleResolver
 ## Uses the same calculation logic as PreviewResolver to ensure
 ## execution matches previews.
 
+var battle_context: BattleContext
+
+func _init(context: BattleContext):
+	battle_context = context
+
 func deal_damage(
 	source: EffectSource,
 	target: BattleParticipant,
@@ -40,7 +45,7 @@ func apply_status(
 		previous_stacks = target.statuses[status]
 	else:
 		# First time applying this status - call on_apply
-		status.on_apply(target)
+		status.on_apply(target, battle_context)
 	
 	# Add stacks
 	target.statuses[status] = previous_stacks + stacks
@@ -59,7 +64,7 @@ func remove_status(
 	if new_stacks <= 0:
 		# Status fully removed
 		target.statuses.erase(status)
-		status.on_remove(target)
+		status.on_remove(target, battle_context)
 	else:
 		# Still has stacks remaining
 		target.statuses[status] = new_stacks

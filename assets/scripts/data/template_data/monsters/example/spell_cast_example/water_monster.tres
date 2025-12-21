@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="MonsterTemplateData" load_steps=5 format=3 uid="uid://bv6218sdyk2rt"]
+
+[ext_resource type="Script" uid="uid://dtd1vqxepeush" path="res://assets/scripts/data/template_data/material_template_data.gd" id="1_hy1bo"]
+[ext_resource type="Script" uid="uid://cv38laeip1og6" path="res://assets/scripts/data/template_data/monster_template_data.gd" id="2_hjg2r"]
+[ext_resource type="Script" uid="uid://c60x8l1pr5ac2" path="res://assets/scripts/helpers/element_ratio.gd" id="2_iw46q"]
+
+[sub_resource type="Resource" id="Resource_hjg2r"]
+script = ExtResource("2_iw46q")
+ratio = Dictionary[int, float]({
+1: 1.0
+})
+metadata/_custom_type_script = "uid://c60x8l1pr5ac2"
+
+[resource]
+script = ExtResource("2_hjg2r")
+element_ratio = SubResource("Resource_hjg2r")
+base_health = 100
+id = "water_monster"
+name = "Water Monster"
+description = "Water Monster [EXAMPLE]"
+metadata/_custom_type_script = "uid://cv38laeip1og6"

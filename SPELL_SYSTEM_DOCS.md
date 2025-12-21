@@ -30,16 +30,33 @@ The system uses a resolver pattern to enable accurate spell previews:
 #### Behavioral Templates (Abstract)
 These define behavior through code and should be subclassed:
 - `RuneTemplateData` - Defines spell effects (damage, healing, etc.)
+  - Create as `.gd` script files, NOT `.tres` resources
+  - Example: `hit_one_rune.gd` extends `RuneTemplateData`
 - `MutationTemplateData` - Modifies spell behavior/stats
+  - Create as `.gd` script files, NOT `.tres` resources
+  - Example: `smoldering_mutation.gd` extends `MutationTemplateData`
 - `StatusTemplateData` - Defines status effect behavior
+  - Create as `.gd` script files, NOT `.tres` resources
+  - Example: `burning_status.gd` extends `StatusTemplateData`
 - `CreatureTemplateData` - Base for characters/monsters
 
 #### Data-Only Templates
-These just hold data and are instantiated directly:
+These just hold data and are instantiated as `.tres` resources:
 - `InkTemplateData` - Element ratio + power (used to craft spells)
+  - Create inline `ElementRatio` in inspector, don't make separate `.tres` files
 - `MaterialTemplateData` - Element ratio + power (used to craft inks)
+  - Create inline `ElementRatio` in inspector
 - `MonsterTemplateData` - Monster stats and drops
+  - Create inline `ElementRatio` in inspector
 - `CharacterTemplateData` - Character base stats
+  - Create inline `ElementRatio` in inspector
+
+#### ElementRatio Workflow
+`ElementRatio` extends `Resource` (not `RefCounted`) only for serialization purposes.
+**Never create separate `.tres` files for element ratios!** Instead:
+1. In any template's `element_ratio` field, click "New ElementRatio"
+2. Set the ratio dictionary directly in the inspector
+3. That's it - no separate file needed
 
 ### 2. Save Data Classes
 
@@ -199,18 +216,36 @@ func modify_description(spell_description: String) -> String:
     return spell_description + " [Piercing]"
 ```
 
-### New Status Effect (e.g., "Burn" DOT)
+### New Status Effect (e.g., "Burning" DOT)
 
 ```gdscript
-class_name BurnStatus
+class_name BurningStatus
 extends StatusTemplateData
 
-func on_turn_start(target: BattleParticipant) -> void:
-    # Would need access to resolver and battle context
-    # This may require refactoring to pass resolver to status effects
-    # For now, this is a design consideration
-    pass
+func on_turn_start(
+    target: BattleParticipant,
+    resolver: BattleResolver,
+    _context: BattleContext
+) -> void:
+    if not target.statuses.has(self):
+        return
+    
+    var stacks := target.statuses[self]
+    
+    # Deal Fire damage equal to stacks
+    var source := EffectSource.new(null, self)
+    resolver.deal_damage(source, target, stacks, [Enums.DamageTag.DOT])
+    
+    # Decrease stacks by 1
+    target.statuses[self] -= 1
+    if target.statuses[self] <= 0:
+        target.statuses.erase(self)
+        on_remove(target, _context)
 ```
+
+**Note**: Status hooks (`on_apply`, `on_remove`, `on_turn_start`) now receive
+`BattleResolver` and `BattleContext` parameters, allowing statuses to deal damage,
+heal, and apply other effects properly.
 
 ## Design Strengths
 

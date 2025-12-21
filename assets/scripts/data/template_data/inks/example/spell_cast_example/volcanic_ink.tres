@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="InkTemplateData" load_steps=4 format=3 uid="uid://bviyoq3ethj8q"]
+
+[ext_resource type="Script" uid="uid://ktk8lsiscb27" path="res://assets/scripts/data/template_data/ink_template_data.gd" id="1_5h1qs"]
+[ext_resource type="Script" uid="uid://c60x8l1pr5ac2" path="res://assets/scripts/helpers/element_ratio.gd" id="1_ki0fl"]
+
+[sub_resource type="Resource" id="Resource_ki0fl"]
+script = ExtResource("1_ki0fl")
+ratio = Dictionary[int, float]({
+0: 0.5,
+2: 0.5
+})
+metadata/_custom_type_script = "uid://c60x8l1pr5ac2"
+
+[resource]
+script = ExtResource("1_5h1qs")
+element_ratio = SubResource("Resource_ki0fl")
+power = 50
+id = "volcanic_ink"
+name = "Volcanic Ink"
+description = "Volcanic Ink [EXAMPLE]"
+metadata/_custom_type_script = "uid://ktk8lsiscb27"
