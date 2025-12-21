@@ -11,6 +11,22 @@ var spell_preview_result: SpellPreviewResult
 func _init():
 	spell_preview_result = SpellPreviewResult.new()
 
+## Finds existing StatusChange or creates a new one, then adds stacks.
+func _accumulate_status_change(
+	target: BattleParticipant,
+	status: StatusTemplateData,
+	stacks: int
+) -> void:
+	# Look for existing change for this target/status combo
+	for change in spell_preview_result.status_changes:
+		if change.target == target and change.status == status:
+			change.stacks += stacks
+			return
+	
+	# No existing change found, create a new one
+	var new_change := StatusChange.new(target, status, stacks)
+	spell_preview_result.status_changes.append(new_change)
+
 func deal_damage(
 	source: EffectSource,
 	target: BattleParticipant,
@@ -41,25 +57,11 @@ func apply_status(
 	status: StatusTemplateData,
 	stacks: int
 ):
-	# Record status application for preview
-	if not spell_preview_result.statuses_applied.has(target):
-		spell_preview_result.statuses_applied[target] = {}
-	
-	var target_statuses: Dictionary = spell_preview_result.statuses_applied[target]
-	if not target_statuses.has(status):
-		target_statuses[status] = 0
-	target_statuses[status] += stacks
+	_accumulate_status_change(target, status, stacks)
 
 func remove_status(
 	target: BattleParticipant,
 	status: StatusTemplateData,
 	stacks: int
 ):
-	# Record status removal for preview (negative stacks)
-	if not spell_preview_result.statuses_applied.has(target):
-		spell_preview_result.statuses_applied[target] = {}
-	
-	var target_statuses: Dictionary = spell_preview_result.statuses_applied[target]
-	if not target_statuses.has(status):
-		target_statuses[status] = 0
-	target_statuses[status] -= stacks
+	_accumulate_status_change(target, status, -stacks)
