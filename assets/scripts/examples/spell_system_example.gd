@@ -1,134 +1,184 @@
 extends Node
 ## Example demonstrating the spell system in action.
 ##
-## IMPORTANT: To run this example, you need to create the following resource files
-## in the Godot editor first:
-## 
-## 1. assets/data/inks/volcanic_ink.tres (InkTemplateData)
-##    - Set id = "volcanic_ink", name = "Volcanic Ink", power = 50
-##    - In the element_ratio field, click "New ElementRatio"
-##    - Set the ratio dictionary: {FIRE: 0.5, EARTH: 0.5}
-## 
-## 2. assets/data/characters/fire_character.tres (CharacterTemplateData)
-##    - Set id = "fire_character", name = "Fire Character"
-##    - Set base_health = 100
-##    - In the element_ratio field, click "New ElementRatio"
-##    - Set the ratio dictionary: {FIRE: 0.5, EARTH: 0.5}
-## 
-## 3. assets/data/monsters/water_monster.tres (MonsterTemplateData)
-##    - Set id = "water_monster", name = "Water Monster"
-##    - Set base_health = 100
-##    - In the element_ratio field, click "New ElementRatio"
-##    - Set the ratio dictionary: {WATER: 1.0}
-##
-## NOTE: Runes, Statuses, and Mutations are implemented purely in .gd scripts.
-## You do NOT create .tres files for them. This example instantiates them in code
-## using the scripts located under assets/scripts/data/template_data/.
-##
-## This script shows how to:
-## 1. Load template data from resources
-## 2. Create a spell from ink, rune, and mutations
-## 3. Preview what the spell will do
-## 4. Cast the spell and apply changes to battle state
+## Fully configurable test harness for casting any spell on any creature.
+## Configure all parameters in the inspector and run to see detailed output.
 
-# Preload template resources (create these in the editor!)
-@export var volcanic_ink: InkTemplateData
-@export var fire_character_template: CharacterTemplateData
-@export var water_monster_template: MonsterTemplateData
+# Spell Configuration
+@export_group("Spell")
+@export var ink: InkTemplateData
+@export var spell_name: String = "Test Spell"
+
+# Rune/Mutation selection (drag .gd script files here)
+@export_group("Spell Behavior")
+@export var rune_script: GDScript
+@export var mutation_scripts: Array[GDScript] = []
+
+# Battle Configuration
+@export_group("Battle Participants")
+@export var caster: CreatureTemplateData
+@export var target: CreatureTemplateData
 
 func _ready():
-	if not _validate_resources():
+	if not _validate_configuration():
 		return
-	example_spell_cast()
+	test_spell_cast()
 
-func _validate_resources() -> bool:
-	if volcanic_ink == null:
-		push_error("volcanic_ink not assigned! Assign it in the inspector.")
-		return false
-	if fire_character_template == null:
-		push_error("fire_character_template not assigned! Assign it in the inspector.")
-		return false
-	if water_monster_template == null:
-		push_error("water_monster_template not assigned! Assign it in the inspector.")
-		return false
-	return true
+func _validate_configuration() -> bool:
+	var valid := true
+	
+	if ink == null:
+		push_error("Ink template not assigned!")
+		valid = false
+	if rune_script == null:
+		push_error("Rune script not assigned!")
+		valid = false
+	if caster == null:
+		push_error("Caster template not assigned!")
+		valid = false
+	if target == null:
+		push_error("Target template not assigned!")
+		valid = false
+	
+	return valid
 
-func example_spell_cast():
-	print("=== Spell System Example ===\n")
+func test_spell_cast():
+	print("\n", "=".repeat(60))
+	print("SPELL CAST TEST")
+	print("=".repeat(60), "\n")
 	
-	var hit_one_rune := HitOneRune.new()
-	var smoldering_mutation := SmolderingMutation.new()
+	# Create spell
+	var rune_instance = rune_script.new()
+	if not rune_instance is RuneTemplateData:
+		push_error("Rune script must extend RuneTemplateData, got: " + str(rune_instance.get_class()))
+		return
+	var rune: RuneTemplateData = rune_instance
 	
-	# Create spell save data (this is what the player actually owns)
-	var spell_data := SpellSaveData.new(
-		"Volcanic Strike",
-		volcanic_ink,
-		hit_one_rune,
-		[smoldering_mutation]
-	)
+	var mutations: Array[MutationTemplateData] = []
+	for script in mutation_scripts:
+		if script != null:
+			var mutation_instance = script.new()
+			if not mutation_instance is MutationTemplateData:
+				push_error("Mutation script must extend MutationTemplateData, got: " + str(mutation_instance.get_class()))
+				continue
+			mutations.append(mutation_instance)
 	
-	# Create the runtime spell (this compiles the spell)
+	var spell_data := SpellSaveData.new(spell_name, ink, rune, mutations)
 	var spell := Spell.new(spell_data)
 	
-	print("Spell: ", spell_data.name)
-	print("Ink Power: ", volcanic_ink.power)
-	print("Spell Compiled Power: ", spell.power)
-	print("Spell Element Ratio: Fire=", spell.element_ratio.ratio[Enums.Element.FIRE], 
-		  " Earth=", spell.element_ratio.ratio[Enums.Element.EARTH])
-	print("Description: ", spell.description)
-	print()
-	# Create battle participants using templates
-	# Player controls a character, so we need CharacterSaveData for it
-	var player_save := CharacterSaveData.new(fire_character_template.id, 1)
+	_print_spell_info(spell)
 	
-	var player_character := CharacterBattleParticipant.new(fire_character_template, player_save, true)
-	var enemy_monster := MonsterBattleParticipant.new(water_monster_template, false)
+	# Create participants
+	var caster_participant := _create_caster()
+	var target_participant := _create_target()
+	
+	_print_participant_info("CASTER", caster_participant)
+	_print_participant_info("TARGET (Before Cast)", target_participant)
 	
 	# Create battle context
 	var battle := BattleContext.new()
-	battle.player_team = [player_character]
-	battle.enemy_team = [enemy_monster]
-	
-	var casters: Array[BattleParticipant] = [player_character]
-	var targets: Array[BattleParticipant] = [enemy_monster]
-	
-	print("Attacker: Fire/Earth creature")
-	print("Defender: Water creature (weak to Earth)")
-	var fire_ratio = volcanic_ink.element_ratio
-	var water_ratio = water_monster_template.element_ratio
-	print("Expected type advantage: ", 
-		  fire_ratio.ratio[Enums.Element.EARTH], " earth * ",
-		  water_ratio.ratio[Enums.Element.WATER], " water = +",
-		  fire_ratio.ratio[Enums.Element.EARTH] * water_ratio.ratio[Enums.Element.WATER],
-		  " multiplier")
-	print()
-	
-	# PREVIEW the spell
-	print("--- PREVIEW ---")
-	var preview := spell.preview(casters, targets, battle)
-	for target in preview.damage_by_target:
-		var damage: int = preview.damage_by_target[target]
-		print("Will deal ", damage, " damage to target")
-		print("(Base: ", spell.power, " * Type advantage multiplier)")
-	
-	for status_change in preview.status_changes:
-		print("Will apply ", status_change.stacks, " stacks of ", status_change.status.name, " to target")
-	print()
-	
-	# CAST the spell
-	print("--- CASTING ---")
-	print("Enemy HP before: ", enemy_monster.current_health)
-	spell.cast(casters, targets, battle)
-	print("Enemy HP after: ", enemy_monster.current_health)
-	print("Damage dealt: ", 100 - enemy_monster.current_health)
-	
-	print("Enemy statuses:")
-	if enemy_monster.statuses.is_empty():
-		print("  (none)")
+	if caster_participant.is_ally:
+		battle.player_team = [caster_participant]
+		battle.enemy_team = [target_participant]
 	else:
-		for status in enemy_monster.statuses:
-			var stacks = enemy_monster.statuses[status]
-			print("  - ", status.name, ": ", stacks, " stack(s)")
-	print()
+		battle.player_team = [target_participant]
+		battle.enemy_team = [caster_participant]
 	
-	print("=== Example Complete ===")
+	var casters: Array[BattleParticipant] = [caster_participant]
+	var targets: Array[BattleParticipant] = [target_participant]
+	
+	# PREVIEW
+	print("\n", "-".repeat(60))
+	print("SPELL PREVIEW")
+	print("-".repeat(60))
+	var preview := spell.preview(casters, targets, battle)
+	_print_preview(preview, spell)
+	
+	# CAST
+	print("\n", "-".repeat(60))
+	print("CASTING SPELL")
+	print("-".repeat(60))
+	spell.cast(casters, targets, battle)
+	print("✓ Spell cast complete\n")
+	
+	_print_participant_info("CASTER (After Cast)", caster_participant)
+	_print_participant_info("TARGET (After Cast)", target_participant)
+	
+	print("\n", "=".repeat(60))
+	print("TEST COMPLETE")
+	print("=".repeat(60), "\n")
+
+func _create_caster() -> BattleParticipant:
+	if caster is CharacterTemplateData:
+		var save_data := CharacterSaveData.new(caster.id, 1)
+		return CharacterBattleParticipant.new(caster, save_data, true)
+	else:
+		return MonsterBattleParticipant.new(caster, true)
+
+func _create_target() -> BattleParticipant:
+	if target is CharacterTemplateData:
+		var save_data := CharacterSaveData.new(target.id, 1)
+		return CharacterBattleParticipant.new(target, save_data, false)
+	else:
+		return MonsterBattleParticipant.new(target, false)
+
+func _print_spell_info(spell: Spell) -> void:
+	print("SPELL: ", spell.data.name)
+	print("  Ink: ", spell.data.ink.name, " (Power: ", spell.data.ink.power, ")")
+	print("  Rune: ", spell.data.rune.name)
+	if not spell.data.mutations.is_empty():
+		print("  Mutations:")
+		for m in spell.data.mutations:
+			print("    - ", m.name)
+	print("  Compiled Power: ", spell.power)
+	print("  Element Ratio: ", _format_ratio(spell.element_ratio))
+	print("  Element Cost: ", _format_points(spell.element_points_cost))
+	print("  Description: ", spell.description)
+
+func _print_participant_info(label: String, participant: BattleParticipant) -> void:
+	print("\n", label, ": ", participant.get_template().name)
+	print("  HP: ", participant.current_health, " / ", participant.max_health)
+	print("  Element Ratio: ", _format_ratio(participant.element_ratio))
+	
+	if not participant.statuses.is_empty():
+		print("  Statuses:")
+		for status in participant.statuses:
+			var stacks = participant.statuses[status]
+			print("    - ", status.name, ": ", stacks, " stack(s)")
+	else:
+		print("  Statuses: (none)")
+
+func _print_preview(preview: SpellPreviewResult, spell: Spell) -> void:
+	if not preview.damage_by_target.is_empty():
+		print("\nDamage:")
+		for t in preview.damage_by_target:
+			var damage: int = preview.damage_by_target[t]
+			print("  → ", t.get_template().name, " will take ", damage, " damage")
+			print("    (Base power: ", spell.power, " * type advantage)")
+	
+	if not preview.status_changes.is_empty():
+		print("\nStatus Changes:")
+		for change in preview.status_changes:
+			print("  → ", change.target.get_template().name, " will receive:")
+			print("    + ", change.stacks, " stack(s) of ", change.status.name)
+	
+	if preview.damage_by_target.is_empty() and preview.status_changes.is_empty():
+		print("  (No predicted effects)")
+
+func _format_ratio(ratio: ElementRatio) -> String:
+	if ratio == null or ratio.ratio.is_empty():
+		return "(none)"
+	var parts: Array[String] = []
+	for element in ratio.ratio:
+		var element_name = Enums.Element.keys()[element]
+		parts.append(element_name + "=" + str(ratio.ratio[element]))
+	return "{" + ", ".join(parts) + "}"
+
+func _format_points(points: ElementPoints) -> String:
+	if points == null or points.points.is_empty():
+		return "(none)"
+	var parts: Array[String] = []
+	for element in points.points:
+		var element_name = Enums.Element.keys()[element]
+		parts.append(element_name + "=" + str(points.points[element]))
+	return "{" + ", ".join(parts) + "}"

@@ -1,12 +1,14 @@
-[gd_scene load_steps=8 format=4 uid="uid://b2o6a0nce8g7v"]
+[gd_scene load_steps=10 format=4 uid="uid://b2o6a0nce8g7v"]
 
 [ext_resource type="PackedScene" uid="uid://b3gxpj1gv2yft" path="res://assets/scenes/hud.tscn" id="1_dfgan"]
 [ext_resource type="PackedScene" uid="uid://narv8ng7xr6b" path="res://assets/scenes/player.tscn" id="2_sfrgt"]
 [ext_resource type="TileSet" uid="uid://bxa3d2xgo46fu" path="res://assets/tilesets/placeholder.tres" id="3_dfgan"]
 [ext_resource type="Script" uid="uid://cqlhuou8ra43d" path="res://assets/scripts/examples/spell_system_example.gd" id="4_xplbd"]
 [ext_resource type="Resource" uid="uid://bviyoq3ethj8q" path="res://assets/scripts/data/template_data/inks/example/spell_cast_example/volcanic_ink.tres" id="5_6rsl6"]
+[ext_resource type="Script" uid="uid://bkhfc4wi83hd2" path="res://assets/scripts/data/template_data/runes/hit_one_rune.gd" id="6_48cn3"]
 [ext_resource type="Resource" uid="uid://cxkbhutll387f" path="res://assets/scripts/data/template_data/characters/example/spell_cast_example/fire_character.tres" id="6_p5d64"]
 [ext_resource type="Resource" uid="uid://bv6218sdyk2rt" path="res://assets/scripts/data/template_data/monsters/example/spell_cast_example/water_monster.tres" id="7_48cn3"]
+[ext_resource type="Script" uid="uid://cveioag852e73" path="res://assets/scripts/data/template_data/mutations/smoldering_mutation.gd" id="7_ov4sg"]
 
 [node name="PlatformingTest" type="Node2D"]
 
@@ -23,6 +25,8 @@ tile_set = ExtResource("3_dfgan")
 
 [node name="SpellExample" type="Node2D" parent="."]
 script = ExtResource("4_xplbd")
-volcanic_ink = ExtResource("5_6rsl6")
-fire_character_template = ExtResource("6_p5d64")
-water_monster_template = ExtResource("7_48cn3")
+ink = ExtResource("5_6rsl6")
+rune_script = ExtResource("6_48cn3")
+mutation_scripts = Array[GDScript]([ExtResource("7_ov4sg")])
+caster = ExtResource("6_p5d64")
+target = ExtResource("7_48cn3")

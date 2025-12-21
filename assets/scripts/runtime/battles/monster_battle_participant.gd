@@ -10,3 +10,6 @@ func _init(monster_template: MonsterTemplateData, ally: bool = false):
 	max_health = monster_template.base_health
 	current_health = max_health
 	statuses = {}
+
+func get_template() -> CreatureTemplateData:
+	return template

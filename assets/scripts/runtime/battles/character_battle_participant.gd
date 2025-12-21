@@ -12,3 +12,6 @@ func _init(template: CharacterTemplateData, save_data: CharacterSaveData, ally: 
 	current_health = max_health
 	element_ratio = template.element_ratio
 	statuses = {}
+
+func get_template() -> CreatureTemplateData:
+	return character_template
