@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="CharacterTemplateData" load_steps=4 format=3 uid="uid://c8l1l5llxl01b"]
+
+[ext_resource type="Script" uid="uid://b1ihtykqqdihu" path="res://assets/scripts/data/template_data/character_template_data.gd" id="1_fnwos"]
+[ext_resource type="Script" uid="uid://c60x8l1pr5ac2" path="res://assets/scripts/helpers/element_ratio.gd" id="1_o6n4v"]
+
+[sub_resource type="Resource" id="Resource_nmlec"]
+resource_name = "res://assets/scripts/data/template_data/characters/example/spell_cast_example/fire_earth_character.tres (Resource)::element_ratio"
+script = ExtResource("1_o6n4v")
+ratio = Dictionary[int, float]({
+0: 0.5,
+2: 0.5
+})
+metadata/_custom_type_script = "uid://c60x8l1pr5ac2"
+
+[resource]
+script = ExtResource("1_fnwos")
+element_ratio = SubResource("Resource_nmlec")
+base_health = 100
+id = "fire_earth_character"
+name = "Fire Earth Character"
+description = "Fire Earth Character [EXAMPLE]"
+metadata/_custom_type_script = "uid://b1ihtykqqdihu"

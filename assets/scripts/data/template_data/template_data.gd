@@ -24,6 +24,8 @@ func _init():
 func _validate() -> bool:
 	if not Engine.is_editor_hint():
 		return true
+	if resource_path == "" and resource_name == "":
+		return true
 	var valid := true
 	if id.is_empty():
 		var msg := TemplateValidation._describe(self) + " is missing required field 'id'."

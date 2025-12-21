@@ -10,11 +10,13 @@ extends RefCounted
 static func _describe(owner: Resource) -> String:
 	if owner == null:
 		return "<unknown resource>"
-	if owner.resource_path != "":
-		return owner.resource_path
-	if owner.name != "":
-		return owner.name
-	return owner.get_class()
+	var label := owner.resource_path
+	if label == "":
+		label = owner.resource_name
+	var type_name := owner.get_class()
+	if label == "":
+		return type_name + "@" + str(owner.get_instance_id())
+	return label + " (" + type_name + ")"
 
 static func require_resource(value, owner: Resource, field_name: String) -> bool:
 	if value != null:
@@ -30,6 +32,9 @@ static func require_resource(value, owner: Resource, field_name: String) -> bool
 static func require_ratio(ratio: ElementRatio, owner: Resource, field_name: String, check_normalized: bool = true) -> bool:
 	if not require_resource(ratio, owner, field_name):
 		return false
+	if ratio.resource_name == "":
+		var owner_label := _describe(owner)
+		ratio.resource_name = owner_label + "::" + field_name
 	if ratio.ratio == null or ratio.ratio.is_empty():
 		var msg := _describe(owner) + " has '" + field_name + "' assigned but no elements configured."
 		if Engine.is_editor_hint():

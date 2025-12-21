@@ -23,6 +23,8 @@ func _init():
 func _validate() -> bool:
 	if not Engine.is_editor_hint():
 		return true
+	if resource_path == "" and resource_name == "":
+		return true
 	var valid := super._validate()
 	if not TemplateValidation.require_ratio(element_ratio, self, "element_ratio"):
 		valid = false

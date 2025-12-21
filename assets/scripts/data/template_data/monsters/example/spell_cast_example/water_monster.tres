@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://c60x8l1pr5ac2" path="res://assets/scripts/helpers/element_ratio.gd" id="2_iw46q"]
 
 [sub_resource type="Resource" id="Resource_hjg2r"]
+resource_name = "res://assets/scripts/data/template_data/monsters/example/spell_cast_example/water_monster.tres (Resource)::element_ratio"
 script = ExtResource("2_iw46q")
 ratio = Dictionary[int, float]({
 1: 1.0
